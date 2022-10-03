@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use bitcoind_request::{
     client::Client as BitcoindRequestClient,
     command::{
@@ -67,14 +69,16 @@ pub fn get_all_transactions_for_address(
     address: &str,
     electrs_client: &ElectrsClient,
     bitcoind_request_client: &BitcoindRequestClient,
-) -> Vec<TransactionType> {
+) -> Vec<(BitcoindTransaction, Vec<TransactionType>)> {
     let mut all_transactions = vec![];
+    let mut transaction_hash: HashMap<String, Vec<TransactionType>> = HashMap::new();
     let balance = get_balance_for_address(&address, &electrs_client);
     let utxos = get_utxos_for_address(&address, &electrs_client);
     let history = get_historical_transactions_for_address(&address, &electrs_client);
     let transactions =
         get_raw_transactions_for_address(&address, &electrs_client, &bitcoind_request_client);
     for tx in &transactions {
+        let mut grouped_transactions = vec![];
         for vout in tx.vout.clone() {
             let vout_address = if vout.script_pub_key.address.is_some() {
                 vout.script_pub_key.address
@@ -84,7 +88,7 @@ pub fn get_all_transactions_for_address(
             match vout_address {
                 Some(addr) => {
                     if addr == address {
-                        all_transactions.push(TransactionType::Recieved(vout.n, tx.clone()));
+                        grouped_transactions.push(TransactionType::Recieved(vout.n, tx.clone()));
                     }
                 }
                 None => {}
@@ -107,7 +111,7 @@ pub fn get_all_transactions_for_address(
                     match vout_address {
                         Some(addr) => {
                             if addr == address {
-                                all_transactions.push(TransactionType::Sent(
+                                grouped_transactions.push(TransactionType::Sent(
                                     vout_for_vin.n,
                                     transaction_for_vin.clone(),
                                     tx.clone(),
@@ -119,6 +123,8 @@ pub fn get_all_transactions_for_address(
                 }
             }
         }
+        all_transactions.push((tx.clone(), grouped_transactions));
     }
+
     all_transactions
 }

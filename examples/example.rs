@@ -13,7 +13,7 @@ fn main() {
     let electrs_client = ElectrsClient::new(&electrs_url);
 
     let transactions = get_all_transactions_for_address(
-        "mtveoXKcb1EjpspMmhPAJ6RkGeewbzWYDd",
+        "mw1Bk1AJSs9zaiL5RaQyp1YGfkuruvZAXR",
         &electrs_client,
         &bitcoind_request_client,
     );
