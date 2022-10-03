@@ -2,7 +2,7 @@
 name = "bitcoin-blockchain-query"
 version = "0.1.0"
 edition = "2021"
-description = "This library provides helpful functions to get information from the Bitcoin Blockhain"
+description = "Request information from the Bitcoin Blockchain"
 license = "MIT"
 
 
