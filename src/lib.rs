@@ -19,7 +19,7 @@ pub type VoutIndex = u64;
 pub type SpentFromTransaction = BitcoindTransaction;
 pub type SpentInTransaction = BitcoindTransaction;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum TransactionType {
     Sent(VinIndex, SpentFromTransaction, SpentInTransaction),
     Recieved(VoutIndex, BitcoindTransaction),
