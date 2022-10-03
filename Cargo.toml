@@ -1,0 +1,13 @@
+[package]
+name = "bitcoin-blockchain-query"
+version = "0.1.0"
+edition = "2021"
+description = "This library provides helpful functions to get information from the Bitcoin Blockhain"
+license = "MIT"
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+bitcoind-request = "=0.1.13"
+electrs-query = "=0.1.2"
