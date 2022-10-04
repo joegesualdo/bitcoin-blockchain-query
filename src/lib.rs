@@ -75,7 +75,7 @@ type Blocktime = i64;
 type TransactionFlowsForMultipleAddressesOrganizedByTransaction =
     HashMap<(Txid, Blocktime), Vec<TransactionFlow>>;
 
-fn organize_transaction_flows_for_mulitple_addresses_by_txid_and_blocktime(
+pub fn organize_transaction_flows_for_mulitple_addresses_by_txid_and_blocktime(
     address_transaction_flows: AddressTransactionFlows,
 ) -> TransactionFlowsForMultipleAddressesOrganizedByTransaction {
     let mut transactions_grouped_by_transaction: TransactionFlowsForMultipleAddressesOrganizedByTransaction  =
