@@ -16,7 +16,7 @@ This library relies on querying both a bitcoin full node and an electrs server s
 > Add package to Cargo.toml file
 ```rust
 [dependencies]
-bitcoin-blockchain-query = "0.1.4"
+bitcoin-blockchain-query = "0.1.5"
 ```
 
 ## Usage:

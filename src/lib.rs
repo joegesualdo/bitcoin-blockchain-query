@@ -68,7 +68,7 @@ fn get_raw_transactions_for_address(
 #[derive(Debug, Clone)]
 pub struct TransactionFlowsWithTransaction(pub (BitcoindTransaction, Vec<TransactionFlow>));
 #[derive(Debug, Clone)]
-pub struct AddressTransactionFlows(pub Vec<TransactionFlowsWithTransaction>);
+pub struct TransactionFlowsForAddress(pub Vec<TransactionFlowsWithTransaction>);
 
 type Txid = String;
 type Blocktime = i64;
@@ -76,22 +76,24 @@ type TransactionFlowsForMultipleAddressesOrganizedByTransaction =
     HashMap<(Txid, Blocktime), Vec<TransactionFlow>>;
 
 pub fn organize_transaction_flows_for_mulitple_addresses_by_txid_and_blocktime(
-    address_transaction_flows: AddressTransactionFlows,
+    transaction_flows_for_addresses: Vec<TransactionFlowsForAddress>,
 ) -> TransactionFlowsForMultipleAddressesOrganizedByTransaction {
     let mut transactions_grouped_by_transaction: TransactionFlowsForMultipleAddressesOrganizedByTransaction  =
         HashMap::new();
-    for transaction_flows in address_transaction_flows.0.clone() {
-        let (tx, tx_types) = transaction_flows.0;
-        let txid = tx.txid;
-        let blocktime = tx.time as i64;
-        match transactions_grouped_by_transaction.get(&(txid.clone(), blocktime)) {
-            Some(transactions) => {
-                let list_to_add = tx_types.clone();
-                let new_list = transactions.iter().chain(&list_to_add).cloned().collect();
-                transactions_grouped_by_transaction.insert((txid, blocktime), new_list);
-            }
-            None => {
-                transactions_grouped_by_transaction.insert((txid, blocktime), tx_types);
+    for transaction_flows_for_address in transaction_flows_for_addresses.clone() {
+        for transaction_flows_with_transaction in transaction_flows_for_address.0 {
+            let (tx, tx_types) = transaction_flows_with_transaction.0;
+            let txid = tx.txid;
+            let blocktime = tx.time as i64;
+            match transactions_grouped_by_transaction.get(&(txid.clone(), blocktime)) {
+                Some(transactions) => {
+                    let list_to_add = tx_types.clone();
+                    let new_list = transactions.iter().chain(&list_to_add).cloned().collect();
+                    transactions_grouped_by_transaction.insert((txid, blocktime), new_list);
+                }
+                None => {
+                    transactions_grouped_by_transaction.insert((txid, blocktime), tx_types);
+                }
             }
         }
     }
@@ -102,7 +104,7 @@ pub fn get_transaction_flows_for_address(
     address: &str,
     electrs_client: &ElectrsClient,
     bitcoind_request_client: &BitcoindRequestClient,
-) -> AddressTransactionFlows {
+) -> TransactionFlowsForAddress {
     let mut transaction_flows_for_address = vec![];
     let transactions =
         get_raw_transactions_for_address(address, electrs_client, bitcoind_request_client);
@@ -158,5 +160,5 @@ pub fn get_transaction_flows_for_address(
         )));
     }
 
-    AddressTransactionFlows(transaction_flows_for_address)
+    TransactionFlowsForAddress(transaction_flows_for_address)
 }
