@@ -16,29 +16,27 @@ This library relies on querying both a bitcoin full node and an electrs server s
 > Add package to Cargo.toml file
 ```rust
 [dependencies]
-bitcoin-blockchain-query = "0.1.6"
+bitcoin-blockchain-query = "0.1.7"
 ```
 
 ## Usage:
 ```rust
-use bitcoin_blockchain_query::get_all_transactions_for_address;
+use bitcoin_blockchain_query::get_transaction_flows_for_address;
 use bitcoind_request::{self, client::Client as BitcoindRequestClient};
 use electrs_query::{self, Client as ElectrsClient};
-
+use std::env;
 fn main() {
     let password = env::var("BITCOIND_PASSWORD").expect("BITCOIND_PASSWORD env variable not set");
     let username = env::var("BITCOIND_USERNAME").expect("BITCOIND_USERNAME env variable not set");
     let bitcoind_url = env::var("BITCOIND_URL").expect("BITCOIND_URL env variable not set");
     let electrs_url = env::var("ELECTRS_URL").expect("ELECTRS_URL env variable not set");
 
-    // Connect to bitcoin full node
     let bitcoind_request_client =
         BitcoindRequestClient::new(&bitcoind_url, &username, &password).unwrap();
-    // Connect to electrs server
     let electrs_client = ElectrsClient::new(&electrs_url);
 
-    let transactions = get_all_transactions_for_address(
-        "mtveoXKcb1EjpspMmhPAJ6RkGeewbzWYDd",
+    let transactions = get_transaction_flows_for_address(
+        "myueA9NpyLdp6QPkgiWnxbLDo6xudA9sSD",
         &electrs_client,
         &bitcoind_request_client,
     );
