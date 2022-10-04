@@ -1,4 +1,4 @@
-use bitcoin_blockchain_query::get_all_transactions_for_address;
+use bitcoin_blockchain_query::get_transaction_flows_for_address;
 use bitcoind_request::{self, client::Client as BitcoindRequestClient};
 use electrs_query::{self, Client as ElectrsClient};
 use std::env;
@@ -12,8 +12,8 @@ fn main() {
         BitcoindRequestClient::new(&bitcoind_url, &username, &password).unwrap();
     let electrs_client = ElectrsClient::new(&electrs_url);
 
-    let transactions = get_all_transactions_for_address(
-        "mw1Bk1AJSs9zaiL5RaQyp1YGfkuruvZAXR",
+    let transactions = get_transaction_flows_for_address(
+        "myueA9NpyLdp6QPkgiWnxbLDo6xudA9sSD",
         &electrs_client,
         &bitcoind_request_client,
     );

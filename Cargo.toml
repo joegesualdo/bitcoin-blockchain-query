@@ -1,6 +1,6 @@
 [package]
 name = "bitcoin-blockchain-query"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 description = "Request information from the Bitcoin Blockchain"
 license = "MIT"
