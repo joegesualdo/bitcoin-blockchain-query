@@ -65,24 +65,24 @@ fn get_raw_transactions_for_address(
     transactions
 }
 
-#[derive(Debug, Clone)]
-pub struct TransactionFlowsWithTransaction(pub (BitcoindTransaction, Vec<TransactionFlow>));
-#[derive(Debug, Clone)]
-pub struct TransactionFlowsForAddress(pub Vec<TransactionFlowsWithTransaction>);
+pub type TransactionFlowsWithTransaction = (BitcoindTransaction, Vec<TransactionFlow>);
+pub type TransactionFlowsForAddress = Vec<TransactionFlowsWithTransaction>;
 
 type Txid = String;
 type Blocktime = i64;
+
 type TransactionFlowsForMultipleAddressesOrganizedByTransaction =
     HashMap<(Txid, Blocktime), Vec<TransactionFlow>>;
 
+// TODO: Not sure if this should be in this library or in the presentation layer of an application.
 pub fn organize_transaction_flows_for_mulitple_addresses_by_txid_and_blocktime(
     transaction_flows_for_addresses: Vec<TransactionFlowsForAddress>,
 ) -> TransactionFlowsForMultipleAddressesOrganizedByTransaction {
     let mut transactions_grouped_by_transaction: TransactionFlowsForMultipleAddressesOrganizedByTransaction  =
         HashMap::new();
     for transaction_flows_for_address in transaction_flows_for_addresses.clone() {
-        for transaction_flows_with_transaction in transaction_flows_for_address.0 {
-            let (tx, tx_types) = transaction_flows_with_transaction.0;
+        for transaction_flows_with_transaction in transaction_flows_for_address {
+            let (tx, tx_types) = transaction_flows_with_transaction;
             let txid = tx.txid;
             let blocktime = tx.time as i64;
             match transactions_grouped_by_transaction.get(&(txid.clone(), blocktime)) {
@@ -154,11 +154,8 @@ pub fn get_transaction_flows_for_address(
                 }
             }
         }
-        transaction_flows_for_address.push(TransactionFlowsWithTransaction((
-            tx.clone(),
-            flows_for_transaction,
-        )));
+        transaction_flows_for_address.push((tx.clone(), flows_for_transaction));
     }
 
-    TransactionFlowsForAddress(transaction_flows_for_address)
+    transaction_flows_for_address
 }
